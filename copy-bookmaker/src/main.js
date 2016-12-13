@@ -5,7 +5,7 @@ import App from './App'
 
 /* eslint-disable no-new */
 window.$ = window.jQuery = require('jquery')
-
+ 
 new Vue({
   el: '#app',
   template: '<App/>',

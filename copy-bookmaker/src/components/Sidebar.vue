@@ -20,7 +20,7 @@
         <div v-for="(cat,index) in categories" class="item clickable">
           <div class='content'>
             <a :class='"empty circular label ui " + cat.color '> </a>
-            <span @click="categorySelected(cat)"
+            <span @click="categorySelected(cat.id)"
                   :class="{selected:selectedCategory===cat}">
                 {{cat.name}}
             </span>
@@ -43,6 +43,12 @@
     >
 
     </category-modal>
+    <bookmarkmodal
+      :categories='categories'
+      v-if='isBookmarkShow'
+      v-on:closebookmarkmodal='closeBookMarkerModal'
+    >
+    </bookmarkmodal>
   </div>
 </template>
 <style scoped>
@@ -54,23 +60,23 @@ visibility:hidden;
 }
 .btn_del:hover{
 visibility:visible;
-} 
- 
+}
 </style>
-<script >
-  import   store, { eventBusVue }  from '../store/index'
+<script type="text/babel">
+  import   store, {eventBusVue}  from '../store/index'
   import CategoryModal from './CategoryModal.vue'
+  import bookmarkmodal from './bookmarkmodal.vue'
   export default{
     components: {
-      CategoryModal
+      CategoryModal, bookmarkmodal
     },
     data: () => {
       return {
         isActive: true,
         rawTitle: 'categories',
-        msg: 'hello vue',
         selectedCategory: '',
-        isCategoryShow: false
+        isCategoryShow: false,
+        isBookmarkShow: false
       }
     },
     computed: {
@@ -83,6 +89,7 @@ visibility:visible;
       categories: function () {
         return this.rawcategories.map(ctg => {
           let name = ctg.name;
+          console.log(name, '-----------------')
           ctg.name = name.slice(0, 1).toUpperCase() + name.slice(1)
           return ctg
         })
@@ -102,28 +109,27 @@ visibility:visible;
         console.log(category)
       },
       addCategory() {
-        // console.log('------------')
-        // const date = Date.now()
-        // const cat = {
-        //   name: String(date),
-        //   color: 'purple'
-        // }
-        // store.addCategory(cat)
         this.isCategoryShow = true
-        // eventBusVue.$emit('ADD-CATEGORY')
       },
+
       closeCategoryModal(){
         this.isCategoryShow = false
       },
-      selectedCategory: () => {
-
+      addBookmark() {
+        this.isBookmarkShow = true
       },
-      addBookmark: () => {
-
+      closeBookMarkerModal(){
+        this.isBookmarkShow = false
       },
       deleteCategory: (category) => {
         store.removeCategory(category)
+      },
+      categorySelected(id){
+        this.selectedCategory = id
+        this.$emit('selected_category',id)
       }
     }
   }
+
+
 </script>

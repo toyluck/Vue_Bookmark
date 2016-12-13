@@ -1,43 +1,79 @@
 <template>
-  <!--<transition name='cat-modal'>-->
-
   <div class="modelmask" @click.self='closeModal'>
     <div class="model-wrapper">
       <div id="cat-modal" class="ui small ">
         <i class="close icon" @click.stop='closeModal'> </i>
         <div class="header">
-          <h2>Add a new category</h2>
+          <h2>Add a new bookmark</h2>
         </div>
         <div class="content">
           <form class="ui form">
             <div class="field">
-              <label class="field" for="catName">Category name</label>
-              <input v-model='catName' type="text" id='catName'
-                     placeholder="Enter a catetory name...">
+              <label class="field" for="bookTitle">Bookmark Title</label>
+              <input v-model='bookTitle' type="text" id='bookTitle'
+                     placeholder="Enter a title for your bookmark...">
             </div>
+
             <div class="field">
-              <label class="field" for="catColor">Category color</label>
-              <select v-model='catColor' id="catColor"
+              <label class="field" for="bookUrl">Bookmark URL</label>
+              <input v-model='bookUrl' type="text" id='bookUrl'
+                     placeholder="Enter a bookUrl for your bookmark...">
+            </div>
+
+            <div class="field">
+              <label class="field" for="selectedCategory">Bookmark category </label>
+              <select v-model='selectedCategory' id="selectedCategory"
                       class="ui simple dropdown">
-                <option value="">Select a color</option>
-                <option v-for='color in categoryColors'
+                <option value="">Select a category</option>
+                <option v-for='category in categories' :value='category'
                 >
-                  {{color|capitalize}}
+                  {{category.name}}
                 </option>
               </select>
             </div><!-- select fileds-->
           </form>
         </div><!-- content -->
         <div class="actions">
-          <div @click="addCategory" class="ui purple inverted button  right">Save</div>
+          <div @click="addBookmark" class="ui purple inverted button  right">Save</div>
         </div>
       </div>
     </div>
-
   </div>
-
-  <!--</transition>-->
 </template>
+<script type="text/babel">
+  import store from '../store'
+  export default{
+    created(){
+
+    },
+    props: {
+      categories: {
+        type:Array
+      }
+    },
+    data: function () {
+      return {
+        bookTitle: '',
+        bookUrl: '',
+        selectedCategory: {}
+      }
+    },
+    methods: {
+      addBookmark: function () {
+        const bmm = this
+          , bookmark = {}
+        bookmark.bookTitle = bmm.bookTitle
+        bookmark.bookUrl = bmm.bookUrl
+        bookmark.category = bmm.selectedCategory
+        store.addBookmark(bookmark)
+        this.closeModal()
+      }, closeModal(){
+        this.$emit('closebookmarkmodal')
+      }
+    }
+  }
+
+</script>
 <style scoped>
   .modelmask{
   z-index: 1001;
@@ -108,49 +144,7 @@
 
 
 
+
+
+
 </style>
-<script type='text/babel'>
-  import {eventBusVue} from "../store"
-  import store from '../store'
-
-  export default{
-
-    props: {
-      isShowModal: true
-    },
-    data: function () {
-      return {
-        catName: '',
-        catColor: '',
-        categoryColors: ['red', 'orange', 'yellow', 'olive', 'green',
-          'teal', 'blue', 'violet', 'purple', 'pink', 'brown', 'grey', 'black']
-      }
-    },
-    watch: {
-      catColor: function () {
-        console.log(this.catColor)
-      }
-    },
-    filters: {
-      capitalize: (content) => content.slice(0, 1).toLocaleUpperCase() + content.slice(1)
-    },
-    methods: {
-      addCategory: function () {
-        const newCategory = {}
-          , cm = this
-        newCategory.name = cm.catName
-        newCategory.color = cm.catColor
-        store.addCategory(newCategory)
-        this.closeModal()
-
-      },
-      closeModal(){
-        this.$emit('closecategorymodal')
-      }
-    }
-  }
-</script>
-
-
-// WEBPACK FOOTER //
-// CategoryModal.vue?06c52e34
